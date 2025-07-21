@@ -1153,10 +1153,6 @@ body {
         width: auto
     }
 
-    .work--lockup .slider--item-left,
-    .work--lockup .slider--item-right {
-        display: none
-    }
 }
 
 .about {
