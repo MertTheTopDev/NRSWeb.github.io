@@ -957,6 +957,11 @@ body {
     position: relative
 }
 
+
+.slider {
+    will-change: transform, opacity;
+}
+
 .work--lockup .slider {
     position: relative;
     display: -webkit-box;
@@ -973,15 +978,21 @@ body {
     position: absolute;
     visibility: hidden;
     opacity: 0;
+    pointer-events: none;
     text-align: center;
-    transition: opacity 0.3s ease-in-out;
+    transition: opacity 0.4s ease, transform 0.4s ease;
+    transform: scale(0.95);
 }
 
-.slider--item-center {
+.work--lockup .slider--item-center {
+    position: relative !important;
     visibility: visible !important;
     opacity: 1 !important;
-    position: relative !important;
+    pointer-events: auto;
+    transform: scale(1);
+    z-index: 2;
 }
+
 
 .work--lockup .slider--item a {
     text-decoration: none;
