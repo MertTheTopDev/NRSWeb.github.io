@@ -956,10 +956,15 @@ body {
 .work--lockup {
     position: relative
 }
-
-
 .slider {
-    will-change: transform, opacity;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s ease;
+}
+
+.slider.loaded {
+  opacity: 1;
+  pointer-events: auto;
 }
 
 .work--lockup .slider {

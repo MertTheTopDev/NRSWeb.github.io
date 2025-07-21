@@ -276,14 +276,9 @@ $(document).ready(function () {
   outerNav();
   workSlider();
   transitionLabels();
-
   $(window).on('load', function () {
-    const slider = document.querySelector('.slider');
-    if (slider) {
-      slider.style.display = 'none';
-      void slider.offsetHeight; // repaint trigger
-      slider.style.display = '';
-    }
+    setTimeout(() => {
+      $('.slider').addClass('loaded');
+    }, 100); // 100-200ms arası süper olur
   });
-
 });
