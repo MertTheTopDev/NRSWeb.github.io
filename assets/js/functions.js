@@ -277,8 +277,8 @@ $(document).ready(function () {
   workSlider();
   transitionLabels();
   $(window).on('load', function () {
-    setTimeout(() => {
-      $('.slider').addClass('loaded');
-    }, 100); // 100-200ms arası süper olur
-  });
+  setTimeout(() => {
+    $('.slider').addClass('loaded');
+  }, 100);
+});
 });
