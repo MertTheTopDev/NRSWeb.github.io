@@ -971,8 +971,16 @@ body {
 
 .work--lockup .slider--item {
     position: absolute;
-    display: none;
-    text-align: center
+    visibility: hidden;
+    opacity: 0;
+    text-align: center;
+    transition: opacity 0.3s ease-in-out;
+}
+
+.slider--item-center {
+    visibility: visible !important;
+    opacity: 1 !important;
+    position: relative !important;
 }
 
 .work--lockup .slider--item a {
