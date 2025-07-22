@@ -12,187 +12,150 @@ function initializeSlider(currentIndex = 0) {
   $items.eq(currentIndex).css('display', 'block');
 }
 
-
 $(document).ready(function () {
-  const $items = $('.slider--item');
+  const $sliderItems = $('.slider--item');
   let current = 0;
 
-  initializeSlider(current);
+  function showOnly(index) {
+    $sliderItems.removeClass('slider--item-center').hide();
+    $sliderItems.eq(index).addClass('slider--item-center').show();
+  }
 
-  $('.slider-btn.next').on('click', function () {
-    current = (current + 1) % $items.length;
-    initializeSlider(current);
+  $('.slider--next').on('click', function () {
+    current = (current + 1) % $sliderItems.length;
+    showOnly(current);
   });
 
-  $('.slider-btn.prev').on('click', function () {
-    current = (current - 1 + $items.length) % $items.length;
-    initializeSlider(current);
+  $('.slider--prev').on('click', function () {
+    current = (current - 1 + $sliderItems.length) % $sliderItems.length;
+    showOnly(current);
   });
+
+  showOnly(current);
 });
-  $('.side-nav li, .outer-nav li').click(function () {
 
-    if (!($(this).hasClass('is-active'))) {
+// swipe support for touch devices
+var targetElement = document.getElementById('viewport'),
+  mc = new Hammer(targetElement);
+mc.get('swipe').set({ direction: Hammer.DIRECTION_VERTICAL });
+mc.on('swipeup swipedown', function (e) {
 
-      var $this = $(this),
-        curActive = $this.parent().find('.is-active'),
-        curPos = $this.parent().children().index(curActive),
-        nextPos = $this.parent().children().index($this),
-        lastItem = $(this).parent().children().length - 1;
+  updateHelper(e);
 
+});
+
+$(document).keyup(function (e) {
+
+  if (!($('.outer-nav').hasClass('is-vis'))) {
+    e.preventDefault();
+    updateHelper(e);
+  }
+
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+  const items = document.querySelectorAll('.slider--item');
+  const nextBtn = document.querySelector('.slider-btn.next');
+  const prevBtn = document.querySelector('.slider-btn.prev');
+
+  let current = 0;
+
+  function showItem(index) {
+    items.forEach(item => {
+      item.classList.remove('slider--item-center');
+      item.style.display = 'none';
+    });
+
+    items[index].classList.add('slider--item-center');
+    items[index].style.display = 'block';
+  }
+
+  nextBtn.addEventListener('click', () => {
+    current = (current + 1) % items.length;
+    showItem(current);
+  });
+
+  prevBtn.addEventListener('click', () => {
+    current = (current - 1 + items.length) % items.length;
+    showItem(current);
+  });
+
+  // İlk öğeyi göster
+  showItem(current);
+});
+
+
+// determine scroll, swipe, and arrow key direction
+function updateHelper(param) {
+
+  var curActive = $('.side-nav').find('.is-active'),
+    curPos = $('.side-nav').children().index(curActive),
+    lastItem = $('.side-nav').children().length - 1,
+    nextPos = 0;
+
+  if (param.type === "swipeup" || param.keyCode === 40 || param > 0) {
+    if (curPos !== lastItem) {
+      nextPos = curPos + 1;
       updateNavs(nextPos);
       updateContent(curPos, nextPos, lastItem);
-
     }
-
-  });
-
-  $('.cta').click(function () {
-
-    var curActive = $('.side-nav').find('.is-active'),
-      curPos = $('.side-nav').children().index(curActive),
-      lastItem = $('.side-nav').children().length - 1,
+    else {
+      updateNavs(nextPos);
+      updateContent(curPos, nextPos, lastItem);
+    }
+  }
+  else if (param.type === "swipedown" || param.keyCode === 38 || param < 0) {
+    if (curPos !== 0) {
+      nextPos = curPos - 1;
+      updateNavs(nextPos);
+      updateContent(curPos, nextPos, lastItem);
+    }
+    else {
       nextPos = lastItem;
-
-    updateNavs(lastItem);
-    updateContent(curPos, nextPos, lastItem);
-
-  });
-
-  // swipe support for touch devices
-  var targetElement = document.getElementById('viewport'),
-    mc = new Hammer(targetElement);
-  mc.get('swipe').set({ direction: Hammer.DIRECTION_VERTICAL });
-  mc.on('swipeup swipedown', function (e) {
-
-    updateHelper(e);
-
-  });
-
-  $(document).keyup(function (e) {
-
-    if (!($('.outer-nav').hasClass('is-vis'))) {
-      e.preventDefault();
-      updateHelper(e);
+      updateNavs(nextPos);
+      updateContent(curPos, nextPos, lastItem);
     }
-
-  });
-
-  // determine scroll, swipe, and arrow key direction
-  function updateHelper(param) {
-
-    var curActive = $('.side-nav').find('.is-active'),
-      curPos = $('.side-nav').children().index(curActive),
-      lastItem = $('.side-nav').children().length - 1,
-      nextPos = 0;
-
-    if (param.type === "swipeup" || param.keyCode === 40 || param > 0) {
-      if (curPos !== lastItem) {
-        nextPos = curPos + 1;
-        updateNavs(nextPos);
-        updateContent(curPos, nextPos, lastItem);
-      }
-      else {
-        updateNavs(nextPos);
-        updateContent(curPos, nextPos, lastItem);
-      }
-    }
-    else if (param.type === "swipedown" || param.keyCode === 38 || param < 0) {
-      if (curPos !== 0) {
-        nextPos = curPos - 1;
-        updateNavs(nextPos);
-        updateContent(curPos, nextPos, lastItem);
-      }
-      else {
-        nextPos = lastItem;
-        updateNavs(nextPos);
-        updateContent(curPos, nextPos, lastItem);
-      }
-    }
-
   }
 
-  // sync side and outer navigations
-  function updateNavs(nextPos) {
+}
 
-    $('.side-nav, .outer-nav').children().removeClass('is-active');
-    $('.side-nav').children().eq(nextPos).addClass('is-active');
-    $('.outer-nav').children().eq(nextPos).addClass('is-active');
+// sync side and outer navigations
+function updateNavs(nextPos) {
 
-  }
+  $('.side-nav, .outer-nav').children().removeClass('is-active');
+  $('.side-nav').children().eq(nextPos).addClass('is-active');
+  $('.outer-nav').children().eq(nextPos).addClass('is-active');
 
-  // update main content area
-  function updateContent(curPos, nextPos, lastItem) {
+}
 
-    $('.main-content').children().removeClass('section--is-active');
-    $('.main-content').children().eq(nextPos).addClass('section--is-active');
+// update main content area
+function updateContent(curPos, nextPos, lastItem) {
+
+  $('.main-content').children().removeClass('section--is-active');
+  $('.main-content').children().eq(nextPos).addClass('section--is-active');
+  $('.main-content .section').children().removeClass('section--next section--prev');
+
+  if (curPos === lastItem && nextPos === 0 || curPos === 0 && nextPos === lastItem) {
     $('.main-content .section').children().removeClass('section--next section--prev');
-
-    if (curPos === lastItem && nextPos === 0 || curPos === 0 && nextPos === lastItem) {
-      $('.main-content .section').children().removeClass('section--next section--prev');
-    }
-    else if (curPos < nextPos) {
-      $('.main-content').children().eq(curPos).children().addClass('section--next');
-    }
-    else {
-      $('.main-content').children().eq(curPos).children().addClass('section--prev');
-    }
-
-    if (nextPos !== 0 && nextPos !== lastItem) {
-      $('.header--cta').addClass('is-active');
-    }
-    else {
-      $('.header--cta').removeClass('is-active');
-    }
-
+  }
+  else if (curPos < nextPos) {
+    $('.main-content').children().eq(curPos).children().addClass('section--next');
+  }
+  else {
+    $('.main-content').children().eq(curPos).children().addClass('section--prev');
   }
 
-  function outerNav() {
-
-    $('.header--nav-toggle').click(function () {
-
-      $('.perspective').addClass('perspective--modalview');
-      setTimeout(function () {
-        $('.perspective').addClass('effect-rotate-left--animate');
-      }, 25);
-      $('.outer-nav, .outer-nav li, .outer-nav--return').addClass('is-vis');
-
-    });
-
-    $('.outer-nav--return, .outer-nav li').click(function () {
-
-      $('.perspective').removeClass('effect-rotate-left--animate');
-      setTimeout(function () {
-        $('.perspective').removeClass('perspective--modalview');
-      }, 400);
-      $('.outer-nav, .outer-nav li, .outer-nav--return').removeClass('is-vis');
-
-    });
-
+  if (nextPos !== 0 && nextPos !== lastItem) {
+    $('.header--cta').addClass('is-active');
+  }
+  else {
+    $('.header--cta').removeClass('is-active');
   }
 
-  function transitionLabels() {
+}
 
-    $('.work-request--information input').focusout(function () {
 
-      var textVal = $(this).val();
-
-      if (textVal === "") {
-        $(this).removeClass('has-value');
-      }
-      else {
-        $(this).addClass('has-value');
-      }
-
-      // correct mobile device window position
-      window.scrollTo(0, 0);
-
-    });
-
-  }
-
-  outerNav();
-  transitionLabels();
-  $(window).on('load', function () {
+$(window).on('load', function () {
   var images = $('.slider img');
   var total = images.length;
   var loaded = 0;
@@ -215,4 +178,6 @@ $(document).ready(function () {
     $('.slider').addClass('loaded');
   }
 });
+
+
 

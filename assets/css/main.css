@@ -957,12 +957,6 @@ body {
     position: relative
 }
 
-.slider {
-  min-height: 400px;
-  overflow: hidden;
-  position: relative;
-}
-
 .slider-app {
   display: none;
   flex-direction: column;
@@ -986,13 +980,20 @@ body {
   pointer-events: auto;
 }
 
-.slider--item {
-  display: none;
+.slider {
+  position: relative;
+  width: 100%;
+  max-width: 400px; /* ya da senin istediğin genişlik */
+  margin: 0 auto;
+  overflow: hidden;
 }
 
-.slider--item.slider--item-center {
-  display: block;
+.slider-controls {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
 }
+
 
 .work--lockup .slider {
     position: relative;
@@ -1006,15 +1007,6 @@ body {
     list-style: none
 }
 
-.work--lockup .slider--item {
-    position: absolute;
-    visibility: hidden;
-    opacity: 0;
-    pointer-events: none;
-    text-align: center;
-    transition: opacity 0.4s ease, transform 0.4s ease;
-    transform: scale(0.95);
-}
 
 .work--lockup .slider--item-center {
     position: relative !important;
@@ -1023,6 +1015,14 @@ body {
     pointer-events: auto;
     transform: scale(1);
     z-index: 2;
+}
+
+.slider--item-center {
+  display: block !important;
+  opacity: 1 !important;
+  transform: scale(1) !important;
+  position: relative !important;
+  z-index: 2;
 }
 
 
@@ -1164,10 +1164,6 @@ body {
         width: auto
     }
 
-    .work--lockup .slider--item-left,
-    .work--lockup .slider--item-right {
-        display: none
-    }
 }
 
 .about {
@@ -1880,4 +1876,78 @@ body {
 .outer-nav li.is-vis:nth-child(5) {
     -webkit-transition-delay: .16s;
     transition-delay: .16s
+}
+
+.single-app-slider {
+  position: relative;
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  overflow: hidden;
+}
+.slider-app-item {
+  display: none;
+  text-align: center;
+  padding: 20px;
+}
+.slider-app-item.is-visible {
+  display: block;
+}
+.slider-app-item img {
+  width: 100%;
+  max-width: 200px;
+  height: auto;
+  margin-bottom: 15px;
+}
+.slider-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+.slider-buttons button {
+  padding: 8px 16px;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+
+/* Tekli Slider Temel Stil */
+.slider-wrapper.single-item-slider {
+  position: relative;
+  overflow: hidden;
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+.slider--item {
+  display: none;
+  opacity: 0;
+  transform: scale(0.95);
+  transition: all 0.4s ease;
+}
+
+.slider--item.slider--item-center {
+  display: block;
+  opacity: 1;
+  transform: scale(1);
+}
+
+.slider--prev,
+.slider--next {
+  cursor: pointer;
+  z-index: 10;
+}
+
+.slider--prev svg,
+.slider--next svg {
+  width: 32px;
+  height: auto;
+  fill: #333;
+  transition: transform 0.3s ease;
+}
+
+.slider--prev:hover svg,
+.slider--next:hover svg {
+  transform: scale(1.1);
 }
