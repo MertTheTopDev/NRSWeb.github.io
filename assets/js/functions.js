@@ -2,21 +2,16 @@
 
 function initializeSlider(currentIndex = 0) {
   const $items = $('.slider--item');
-  const total = $items.length;
+  $items.removeClass('slider--item-center');
 
-  $items.removeClass('slider--item-left slider--item-center slider--item-right');
+  $items.each((index, item) => {
+    $(item).css('display', 'none');
+  });
 
-  if (total === 1) {
-    $items.eq(currentIndex).addClass('slider--item-center');
-  } else if (total === 2) {
-    $items.eq(currentIndex).addClass('slider--item-left');
-    $items.eq((currentIndex + 1) % total).addClass('slider--item-right');
-  } else {
-    $items.eq((currentIndex - 1 + total) % total).addClass('slider--item-left');
-    $items.eq(currentIndex).addClass('slider--item-center');
-    $items.eq((currentIndex + 1) % total).addClass('slider--item-right');
-  }
+  $items.eq(currentIndex).addClass('slider--item-center');
+  $items.eq(currentIndex).css('display', 'block');
 }
+
 
 $(document).ready(function () {
   const $items = $('.slider--item');

@@ -969,6 +969,7 @@ body {
   align-items: center;
   text-align: center;
 }
+
 .slider-app.active {
   display: flex;
 }
@@ -985,6 +986,13 @@ body {
   pointer-events: auto;
 }
 
+.slider--item {
+  display: none;
+}
+
+.slider--item.slider--item-center {
+  display: block;
+}
 
 .work--lockup .slider {
     position: relative;
@@ -1037,8 +1045,8 @@ body {
 }
 
 .work--lockup .slider--item-image {
-    width: 150px;
-    height: 150px;
+    width: 100px;
+    height: 100px;
     margin: 0 auto;
     border-radius: 16px;
     overflow: hidden
@@ -1047,12 +1055,6 @@ body {
 .work--lockup .slider--item-image img {
     width: 100%
 }
-
-.work--lockup .slider--item-left,
-.work--lockup .slider--item-right {
-    display: none !important;
-}
-
 
 .work--lockup .slider--item-center {
     position: relative !important;
