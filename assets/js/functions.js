@@ -6,36 +6,34 @@ function initializeSlider(currentIndex = 0) {
 
   $items.removeClass('slider--item-left slider--item-center slider--item-right');
 
-  const leftIndex = (currentIndex - 1 + total) % total;
-  const rightIndex = (currentIndex + 1) % total;
-
-  $items.eq(leftIndex).addClass('slider--item-left');
-  $items.eq(currentIndex).addClass('slider--item-center');
-  $items.eq(rightIndex).addClass('slider--item-right');
+  if (total === 1) {
+    $items.eq(currentIndex).addClass('slider--item-center');
+  } else if (total === 2) {
+    $items.eq(currentIndex).addClass('slider--item-left');
+    $items.eq((currentIndex + 1) % total).addClass('slider--item-right');
+  } else {
+    $items.eq((currentIndex - 1 + total) % total).addClass('slider--item-left');
+    $items.eq(currentIndex).addClass('slider--item-center');
+    $items.eq((currentIndex + 1) % total).addClass('slider--item-right');
+  }
 }
 
-
-
-
 $(document).ready(function () {
-  const $apps = $('.slider--item'); // DÜZENLENDİ: .slider-app değil!
+  const $items = $('.slider--item');
   let current = 0;
 
-  initializeSlider(current); // ilk setup
+  initializeSlider(current);
 
   $('.slider-btn.next').on('click', function () {
-    current = (current + 1) % $apps.length;
-    initializeSlider(current); // tekrar güncelle
+    current = (current + 1) % $items.length;
+    initializeSlider(current);
   });
 
   $('.slider-btn.prev').on('click', function () {
-    current = (current - 1 + $apps.length) % $apps.length;
+    current = (current - 1 + $items.length) % $items.length;
     initializeSlider(current);
   });
 });
-
-
-
   $('.side-nav li, .outer-nav li').click(function () {
 
     if (!($(this).hasClass('is-active'))) {
@@ -198,7 +196,6 @@ $(document).ready(function () {
   }
 
   outerNav();
-  workSlider();
   transitionLabels();
   $(window).on('load', function () {
   var images = $('.slider img');
