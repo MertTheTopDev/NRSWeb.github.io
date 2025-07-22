@@ -1047,13 +1047,14 @@ body {
 }
 
 .work--lockup .slider--item-center {
-    position: relative;
-    top: 30px;
-    left: 50%;
-    -webkit-transform: translateX(-50%);
-    transform: translateX(-50%);
-    display: block
+    position: relative !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    pointer-events: auto;
+    transform: scale(1);
+    z-index: 2;
 }
+
 
 .work--lockup .slider--item-center a {
     color: #fff
@@ -1153,6 +1154,10 @@ body {
         width: auto
     }
 
+    .work--lockup .slider--item-left,
+    .work--lockup .slider--item-right {
+        display: none
+    }
 }
 
 .about {
