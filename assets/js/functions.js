@@ -2,19 +2,12 @@
 
 function initializeSlider() {
   const $items = $('.slider--item');
-  $items.removeClass('slider--item-left slider--item-center slider--item-right');
-
-  if ($items.length === 1) {
+  $items.removeClass('slider--item-center');
+  if ($items.length > 0) {
     $items.eq(0).addClass('slider--item-center');
-  } else if ($items.length === 2) {
-    $items.eq(0).addClass('slider--item-left');
-    $items.eq(1).addClass('slider--item-center');
-  } else if ($items.length >= 3) {
-    $items.eq(0).addClass('slider--item-left');
-    $items.eq(1).addClass('slider--item-center');
-    $items.eq(2).addClass('slider--item-right');
   }
 }
+
 
 
 $(document).ready(function () {
