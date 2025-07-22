@@ -1,8 +1,8 @@
 // @codekit-prepend "/vendor/hammer-2.0.8.js";
 
 $(document).ready(function () {
-  var $apps = $('.slider-app');
-  var current = 0;
+  const $apps = $('.slider-app');
+  let current = 0;
 
   function showApp(index) {
     $apps.removeClass('active');
@@ -19,7 +19,7 @@ $(document).ready(function () {
     showApp(current);
   });
 
-  // İlk gösterim
+  // İlk app'i göster
   showApp(current);
 });
 
@@ -290,4 +290,3 @@ $(document).ready(function () {
   }
 });
 
-});
