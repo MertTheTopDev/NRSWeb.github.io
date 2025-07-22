@@ -1,38 +1,28 @@
 // @codekit-prepend "/vendor/hammer-2.0.8.js";
 
 $(document).ready(function () {
+  var $apps = $('.slider-app');
+  var current = 0;
 
-  // DOMMouseScroll included for firefox support
-  var canScroll = true,
-    scrollController = null;
-  $(this).on('mousewheel DOMMouseScroll', function (e) {
+  function showApp(index) {
+    $apps.removeClass('active');
+    $apps.eq(index).addClass('active');
+  }
 
-    if (!($('.outer-nav').hasClass('is-vis'))) {
-
-      e.preventDefault();
-
-      var delta = (e.originalEvent.wheelDelta) ? -e.originalEvent.wheelDelta : e.originalEvent.detail * 20;
-
-      if (delta > 50 && canScroll) {
-        canScroll = false;
-        clearTimeout(scrollController);
-        scrollController = setTimeout(function () {
-          canScroll = true;
-        }, 800);
-        updateHelper(1);
-      }
-      else if (delta < -50 && canScroll) {
-        canScroll = false;
-        clearTimeout(scrollController);
-        scrollController = setTimeout(function () {
-          canScroll = true;
-        }, 800);
-        updateHelper(-1);
-      }
-
-    }
-
+  $('.slider-btn.next').on('click', function () {
+    current = (current + 1) % $apps.length;
+    showApp(current);
   });
+
+  $('.slider-btn.prev').on('click', function () {
+    current = (current - 1 + $apps.length) % $apps.length;
+    showApp(current);
+  });
+
+  // İlk gösterim
+  showApp(current);
+});
+
 
   $('.side-nav li, .outer-nav li').click(function () {
 

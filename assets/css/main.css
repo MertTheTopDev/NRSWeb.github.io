@@ -962,6 +962,14 @@ body {
   transition: opacity 0.5s ease;
 }
 
+.slider-app {
+  display: none;
+}
+.slider-app.active {
+  display: flex;
+}
+
+
 .slider.loaded {
   opacity: 1;
   pointer-events: auto;
