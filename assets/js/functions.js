@@ -1,29 +1,39 @@
 // @codekit-prepend "/vendor/hammer-2.0.8.js";
 
-function initializeSlider() {
+function initializeSlider(currentIndex = 0) {
   const $items = $('.slider--item');
-  $items.removeClass('slider--item-center');
-  if ($items.length > 0) {
-    $items.eq(0).addClass('slider--item-center');
-  }
+  const total = $items.length;
+
+  $items.removeClass('slider--item-left slider--item-center slider--item-right');
+
+  const leftIndex = (currentIndex - 1 + total) % total;
+  const rightIndex = (currentIndex + 1) % total;
+
+  $items.eq(leftIndex).addClass('slider--item-left');
+  $items.eq(currentIndex).addClass('slider--item-center');
+  $items.eq(rightIndex).addClass('slider--item-right');
 }
 
 
 
+
 $(document).ready(function () {
-  initializeSlider();
-  const $apps = $('.slider-app');
+  const $apps = $('.slider--item'); // DÜZENLENDİ: .slider-app değil!
   let current = 0;
+
+  initializeSlider(current); // ilk setup
 
   $('.slider-btn.next').on('click', function () {
     current = (current + 1) % $apps.length;
+    initializeSlider(current); // tekrar güncelle
   });
 
   $('.slider-btn.prev').on('click', function () {
     current = (current - 1 + $apps.length) % $apps.length;
+    initializeSlider(current);
   });
-
 });
+
 
 
   $('.side-nav li, .outer-nav li').click(function () {
@@ -162,84 +172,6 @@ $(document).ready(function () {
         $('.perspective').removeClass('perspective--modalview');
       }, 400);
       $('.outer-nav, .outer-nav li, .outer-nav--return').removeClass('is-vis');
-
-    });
-
-  }
-
-  function workSlider() {
-
-    $('.slider--prev, .slider--next').click(function () {
-
-      var $this = $(this),
-        curLeft = $('.slider').find('.slider--item-left'),
-        curLeftPos = $('.slider').children().index(curLeft),
-        curCenter = $('.slider').find('.slider--item-center'),
-        curCenterPos = $('.slider').children().index(curCenter),
-        curRight = $('.slider').find('.slider--item-right'),
-        curRightPos = $('.slider').children().index(curRight),
-        totalWorks = $('.slider').children().length,
-        $left = $('.slider--item-left'),
-        $center = $('.slider--item-center'),
-        $right = $('.slider--item-right'),
-        $item = $('.slider--item');
-
-      $('.slider').css('opacity', 1); 
-
-      setTimeout(function () {
-
-        if ($this.hasClass('slider--next')) {
-          if (curLeftPos < totalWorks - 1 && curCenterPos < totalWorks - 1 && curRightPos < totalWorks - 1) {
-            $left.removeClass('slider--item-left').next().addClass('slider--item-left');
-            $center.removeClass('slider--item-center').next().addClass('slider--item-center');
-            $right.removeClass('slider--item-right').next().addClass('slider--item-right');
-          }
-          else {
-            if (curLeftPos === totalWorks - 1) {
-              $item.removeClass('slider--item-left').first().addClass('slider--item-left');
-              $center.removeClass('slider--item-center').next().addClass('slider--item-center');
-              $right.removeClass('slider--item-right').next().addClass('slider--item-right');
-            }
-            else if (curCenterPos === totalWorks - 1) {
-              $left.removeClass('slider--item-left').next().addClass('slider--item-left');
-              $item.removeClass('slider--item-center').first().addClass('slider--item-center');
-              $right.removeClass('slider--item-right').next().addClass('slider--item-right');
-            }
-            else {
-              $left.removeClass('slider--item-left').next().addClass('slider--item-left');
-              $center.removeClass('slider--item-center').next().addClass('slider--item-center');
-              $item.removeClass('slider--item-right').first().addClass('slider--item-right');
-            }
-          }
-        }
-        else {
-          if (curLeftPos !== 0 && curCenterPos !== 0 && curRightPos !== 0) {
-            $left.removeClass('slider--item-left').prev().addClass('slider--item-left');
-            $center.removeClass('slider--item-center').prev().addClass('slider--item-center');
-            $right.removeClass('slider--item-right').prev().addClass('slider--item-right');
-          }
-          else {
-            if (curLeftPos === 0) {
-              $item.removeClass('slider--item-left').last().addClass('slider--item-left');
-              $center.removeClass('slider--item-center').prev().addClass('slider--item-center');
-              $right.removeClass('slider--item-right').prev().addClass('slider--item-right');
-            }
-            else if (curCenterPos === 0) {
-              $left.removeClass('slider--item-left').prev().addClass('slider--item-left');
-              $item.removeClass('slider--item-center').last().addClass('slider--item-center');
-              $right.removeClass('slider--item-right').prev().addClass('slider--item-right');
-            }
-            else {
-              $left.removeClass('slider--item-left').prev().addClass('slider--item-left');
-              $center.removeClass('slider--item-center').prev().addClass('slider--item-center');
-              $item.removeClass('slider--item-right').last().addClass('slider--item-right');
-            }
-          }
-        }
-
-      }, 400);
-
-      $('.slider').animate({ opacity: 1 }, 400);
 
     });
 
