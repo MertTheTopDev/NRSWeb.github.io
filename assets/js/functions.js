@@ -1,26 +1,35 @@
 // @codekit-prepend "/vendor/hammer-2.0.8.js";
 
+function initializeSlider() {
+  const $items = $('.slider--item');
+  $items.removeClass('slider--item-left slider--item-center slider--item-right');
+
+  if ($items.length === 1) {
+    $items.eq(0).addClass('slider--item-center');
+  } else if ($items.length === 2) {
+    $items.eq(0).addClass('slider--item-left');
+    $items.eq(1).addClass('slider--item-center');
+  } else if ($items.length >= 3) {
+    $items.eq(0).addClass('slider--item-left');
+    $items.eq(1).addClass('slider--item-center');
+    $items.eq(2).addClass('slider--item-right');
+  }
+}
+
+
 $(document).ready(function () {
+  initializeSlider();
   const $apps = $('.slider-app');
   let current = 0;
 
-  function showApp(index) {
-    $apps.removeClass('active');
-    $apps.eq(index).addClass('active');
-  }
-
   $('.slider-btn.next').on('click', function () {
     current = (current + 1) % $apps.length;
-    showApp(current);
   });
 
   $('.slider-btn.prev').on('click', function () {
     current = (current - 1 + $apps.length) % $apps.length;
-    showApp(current);
   });
 
-  // İlk app'i göster
-  showApp(current);
 });
 
 
@@ -182,7 +191,7 @@ $(document).ready(function () {
         $right = $('.slider--item-right'),
         $item = $('.slider--item');
 
-      $('.slider').animate({ opacity: 0 }, 400);
+      $('.slider').css('opacity', 1); 
 
       setTimeout(function () {
 
