@@ -12,28 +12,6 @@ function initializeSlider(currentIndex = 0) {
   $items.eq(currentIndex).css('display', 'block');
 }
 
-$(document).ready(function () {
-  const $sliderItems = $('.slider--item');
-  let current = 0;
-
-  function showOnly(index) {
-    $sliderItems.removeClass('slider--item-center').hide();
-    $sliderItems.eq(index).addClass('slider--item-center').show();
-  }
-
-  $('.slider--next').on('click', function () {
-    current = (current + 1) % $sliderItems.length;
-    showOnly(current);
-  });
-
-  $('.slider--prev').on('click', function () {
-    current = (current - 1 + $sliderItems.length) % $sliderItems.length;
-    showOnly(current);
-  });
-
-  showOnly(current);
-});
-
 // swipe support for touch devices
 var targetElement = document.getElementById('viewport'),
   mc = new Hammer(targetElement);
@@ -179,5 +157,43 @@ $(window).on('load', function () {
   }
 });
 
+// @codekit-prepend "/vendor/hammer-2.0.8.js";
+
+$(document).ready(function () {
+  const $items = $('.slider--item');
+  const $next = $('.slider--next');
+  const $prev = $('.slider--prev');
+  let current = 0;
+
+  function showOnly(index) {
+    $items.removeClass('slider--item-center').hide();
+    $items.eq(index).addClass('slider--item-center').show();
+  }
+
+  function nextSlide() {
+    current = (current + 1) % $items.length;
+    showOnly(current);
+  }
+
+  function prevSlide() {
+    current = (current - 1 + $items.length) % $items.length;
+    showOnly(current);
+  }
+
+  $next.on('click', nextSlide);
+  $prev.on('click', prevSlide);
+
+  // Swipe destek
+  if (typeof Hammer !== 'undefined') {
+    const mc = new Hammer(document.getElementById('viewport'));
+    mc.get('swipe').set({ direction: Hammer.DIRECTION_HORIZONTAL });
+
+    mc.on('swipeleft', nextSlide);
+    mc.on('swiperight', prevSlide);
+  }
+
+  // İlk öğeyi göster
+  showOnly(current);
+});
 
 

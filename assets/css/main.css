@@ -980,14 +980,6 @@ body {
   pointer-events: auto;
 }
 
-.slider {
-  position: relative;
-  width: 100%;
-  max-width: 400px; /* ya da senin istediğin genişlik */
-  margin: 0 auto;
-  overflow: hidden;
-}
-
 .slider-controls {
   display: flex;
   justify-content: space-between;
@@ -1912,42 +1904,58 @@ body {
 }
 
 
-/* Tekli Slider Temel Stil */
-.slider-wrapper.single-item-slider {
+
+
+.slider-wrapper {
   position: relative;
   overflow: hidden;
-  max-width: 100%;
+  width: 100%;
+  max-width: 900px;
   margin: 0 auto;
+}
+
+.slider {
+  list-style: none;
+  padding: 0;
+  margin: 0;
 }
 
 .slider--item {
   display: none;
-  opacity: 0;
-  transform: scale(0.95);
-  transition: all 0.4s ease;
+  text-align: center;
+  transition: all 0.3s ease-in-out;
 }
 
-.slider--item.slider--item-center {
+.slider--item.is-visible {
   display: block;
-  opacity: 1;
-  transform: scale(1);
 }
 
-.slider--prev,
-.slider--next {
+.slider--prev, .slider--next {
+  position: absolute;
+  top: 50%;
+  width: 48px;
+  height: 48px;
+  background: transparent;
+  border: none;
   cursor: pointer;
-  z-index: 10;
+  transform: translateY(-50%);
+  fill: #222;
 }
 
-.slider--prev svg,
-.slider--next svg {
-  width: 32px;
-  height: auto;
-  fill: #333;
-  transition: transform 0.3s ease;
+.slider--prev {
+  left: -64px;
 }
 
-.slider--prev:hover svg,
-.slider--next:hover svg {
-  transform: scale(1.1);
+.slider--next {
+  right: -64px;
+}
+
+@media screen and (max-width: 768px) {
+  .slider--prev {
+    left: -40px;
+  }
+
+  .slider--next {
+    right: -40px;
+  }
 }
