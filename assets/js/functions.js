@@ -1,284 +1,102 @@
-// @codekit-prepend "/vendor/hammer-2.0.8.js";
+(function () {
+  const header = document.querySelector('[data-header]');
+  const nav = document.querySelector('[data-nav]');
+  const navToggle = document.querySelector('[data-nav-toggle]');
+  const year = document.querySelector('[data-year]');
+  const filterButtons = document.querySelectorAll('[data-filter]');
+  const appCards = document.querySelectorAll('.app-card');
+  const videoCards = document.querySelectorAll('[data-youtube-id]');
+  const appIcons = document.querySelectorAll('.app-card__icon img');
 
-$(document).ready(function () {
+  if (year) year.textContent = new Date().getFullYear();
 
-  // DOMMouseScroll included for firefox support
-  var canScroll = true,
-    scrollController = null;
-  $(this).on('mousewheel DOMMouseScroll', function (e) {
-
-    if (!($('.outer-nav').hasClass('is-vis'))) {
-
-      e.preventDefault();
-
-      var delta = (e.originalEvent.wheelDelta) ? -e.originalEvent.wheelDelta : e.originalEvent.detail * 20;
-
-      if (delta > 50 && canScroll) {
-        canScroll = false;
-        clearTimeout(scrollController);
-        scrollController = setTimeout(function () {
-          canScroll = true;
-        }, 800);
-        updateHelper(1);
-      }
-      else if (delta < -50 && canScroll) {
-        canScroll = false;
-        clearTimeout(scrollController);
-        scrollController = setTimeout(function () {
-          canScroll = true;
-        }, 800);
-        updateHelper(-1);
-      }
-
-    }
-
-  });
-
-  $('.side-nav li, .outer-nav li').click(function () {
-
-    if (!($(this).hasClass('is-active'))) {
-
-      var $this = $(this),
-        curActive = $this.parent().find('.is-active'),
-        curPos = $this.parent().children().index(curActive),
-        nextPos = $this.parent().children().index($this),
-        lastItem = $(this).parent().children().length - 1;
-
-      updateNavs(nextPos);
-      updateContent(curPos, nextPos, lastItem);
-
-    }
-
-  });
-
-  $('.cta').click(function () {
-
-    var curActive = $('.side-nav').find('.is-active'),
-      curPos = $('.side-nav').children().index(curActive),
-      lastItem = $('.side-nav').children().length - 1,
-      nextPos = lastItem;
-
-    updateNavs(lastItem);
-    updateContent(curPos, nextPos, lastItem);
-
-  });
-
-  // swipe support for touch devices
-  var targetElement = document.getElementById('viewport'),
-    mc = new Hammer(targetElement);
-  mc.get('swipe').set({ direction: Hammer.DIRECTION_VERTICAL });
-  mc.on('swipeup swipedown', function (e) {
-
-    updateHelper(e);
-
-  });
-
-  $(document).keyup(function (e) {
-
-    if (!($('.outer-nav').hasClass('is-vis'))) {
-      e.preventDefault();
-      updateHelper(e);
-    }
-
-  });
-
-  // determine scroll, swipe, and arrow key direction
-  function updateHelper(param) {
-
-    var curActive = $('.side-nav').find('.is-active'),
-      curPos = $('.side-nav').children().index(curActive),
-      lastItem = $('.side-nav').children().length - 1,
-      nextPos = 0;
-
-    if (param.type === "swipeup" || param.keyCode === 40 || param > 0) {
-      if (curPos !== lastItem) {
-        nextPos = curPos + 1;
-        updateNavs(nextPos);
-        updateContent(curPos, nextPos, lastItem);
-      }
-      else {
-        updateNavs(nextPos);
-        updateContent(curPos, nextPos, lastItem);
-      }
-    }
-    else if (param.type === "swipedown" || param.keyCode === 38 || param < 0) {
-      if (curPos !== 0) {
-        nextPos = curPos - 1;
-        updateNavs(nextPos);
-        updateContent(curPos, nextPos, lastItem);
-      }
-      else {
-        nextPos = lastItem;
-        updateNavs(nextPos);
-        updateContent(curPos, nextPos, lastItem);
-      }
-    }
-
+  function closeNavigation() {
+    navToggle?.setAttribute('aria-expanded', 'false');
+    nav?.classList.remove('is-open');
+    document.body.classList.remove('nav-open');
   }
 
-  // sync side and outer navigations
-  function updateNavs(nextPos) {
+  navToggle?.addEventListener('click', () => {
+    const isExpanded = navToggle.getAttribute('aria-expanded') === 'true';
+    navToggle.setAttribute('aria-expanded', String(!isExpanded));
+    nav?.classList.toggle('is-open');
+    document.body.classList.toggle('nav-open');
+  });
 
-    $('.side-nav, .outer-nav').children().removeClass('is-active');
-    $('.side-nav').children().eq(nextPos).addClass('is-active');
-    $('.outer-nav').children().eq(nextPos).addClass('is-active');
+  nav?.querySelectorAll('a').forEach((link) => {
+    link.addEventListener('click', closeNavigation);
+  });
 
-  }
+  const onScroll = () => {
+    if (!header) return;
+    header.classList.toggle('is-scrolled', window.scrollY > 12);
+  };
+  onScroll();
+  window.addEventListener('scroll', onScroll, { passive: true });
 
-  // update main content area
-  function updateContent(curPos, nextPos, lastItem) {
+  filterButtons.forEach((button) => {
+    button.addEventListener('click', () => {
+      const filter = button.dataset.filter || 'all';
 
-    $('.main-content').children().removeClass('section--is-active');
-    $('.main-content').children().eq(nextPos).addClass('section--is-active');
-    $('.main-content .section').children().removeClass('section--next section--prev');
+      filterButtons.forEach((item) => item.classList.remove('is-active'));
+      button.classList.add('is-active');
 
-    if (curPos === lastItem && nextPos === 0 || curPos === 0 && nextPos === lastItem) {
-      $('.main-content .section').children().removeClass('section--next section--prev');
-    }
-    else if (curPos < nextPos) {
-      $('.main-content').children().eq(curPos).children().addClass('section--next');
-    }
-    else {
-      $('.main-content').children().eq(curPos).children().addClass('section--prev');
-    }
-
-    if (nextPos !== 0 && nextPos !== lastItem) {
-      $('.header--cta').addClass('is-active');
-    }
-    else {
-      $('.header--cta').removeClass('is-active');
-    }
-
-  }
-
-  function outerNav() {
-
-    $('.header--nav-toggle').click(function () {
-
-      $('.perspective').addClass('perspective--modalview');
-      setTimeout(function () {
-        $('.perspective').addClass('effect-rotate-left--animate');
-      }, 25);
-      $('.outer-nav, .outer-nav li, .outer-nav--return').addClass('is-vis');
-
+      appCards.forEach((card) => {
+        const categories = card.dataset.category || '';
+        const shouldShow = filter === 'all' || categories.includes(filter);
+        card.hidden = !shouldShow;
+      });
     });
+  });
 
-    $('.outer-nav--return, .outer-nav li').click(function () {
-
-      $('.perspective').removeClass('effect-rotate-left--animate');
-      setTimeout(function () {
-        $('.perspective').removeClass('perspective--modalview');
-      }, 400);
-      $('.outer-nav, .outer-nav li, .outer-nav--return').removeClass('is-vis');
-
-    });
-
+  function markIconAsFallback(img) {
+    const holder = img.closest('.app-card__icon');
+    if (!holder) return;
+    holder.classList.add('is-fallback');
+    img.remove();
   }
 
-  function workSlider() {
+  appIcons.forEach((img) => {
+    img.addEventListener('error', () => markIconAsFallback(img), { once: true });
 
-    $('.slider--prev, .slider--next').click(function () {
+    if (img.complete && img.naturalWidth === 0) {
+      markIconAsFallback(img);
+    }
+  });
 
-      var $this = $(this),
-        curLeft = $('.slider').find('.slider--item-left'),
-        curLeftPos = $('.slider').children().index(curLeft),
-        curCenter = $('.slider').find('.slider--item-center'),
-        curCenterPos = $('.slider').children().index(curCenter),
-        curRight = $('.slider').find('.slider--item-right'),
-        curRightPos = $('.slider').children().index(curRight),
-        totalWorks = $('.slider').children().length,
-        $left = $('.slider--item-left'),
-        $center = $('.slider--item-center'),
-        $right = $('.slider--item-right'),
-        $item = $('.slider--item');
+  videoCards.forEach((card) => {
+    const videoId = (card.dataset.youtubeId || '').trim();
+    const thumb = card.querySelector('.video-card__thumb');
+    const fallback = card.querySelector('.video-card__fallback');
 
-      $('.slider').animate({ opacity: 0 }, 400);
+    if (!videoId || !thumb) return;
 
-      setTimeout(function () {
+    const youtubeUrl = `https://www.youtube.com/watch?v=${encodeURIComponent(videoId)}`;
+    const imageUrl = `https://i.ytimg.com/vi/${encodeURIComponent(videoId)}/hqdefault.jpg`;
 
-        if ($this.hasClass('slider--next')) {
-          if (curLeftPos < totalWorks - 1 && curCenterPos < totalWorks - 1 && curRightPos < totalWorks - 1) {
-            $left.removeClass('slider--item-left').next().addClass('slider--item-left');
-            $center.removeClass('slider--item-center').next().addClass('slider--item-center');
-            $right.removeClass('slider--item-right').next().addClass('slider--item-right');
-          }
-          else {
-            if (curLeftPos === totalWorks - 1) {
-              $item.removeClass('slider--item-left').first().addClass('slider--item-left');
-              $center.removeClass('slider--item-center').next().addClass('slider--item-center');
-              $right.removeClass('slider--item-right').next().addClass('slider--item-right');
-            }
-            else if (curCenterPos === totalWorks - 1) {
-              $left.removeClass('slider--item-left').next().addClass('slider--item-left');
-              $item.removeClass('slider--item-center').first().addClass('slider--item-center');
-              $right.removeClass('slider--item-right').next().addClass('slider--item-right');
-            }
-            else {
-              $left.removeClass('slider--item-left').next().addClass('slider--item-left');
-              $center.removeClass('slider--item-center').next().addClass('slider--item-center');
-              $item.removeClass('slider--item-right').first().addClass('slider--item-right');
-            }
-          }
+    thumb.href = youtubeUrl;
+    thumb.setAttribute('aria-label', `Watch ${card.querySelector('h3')?.textContent || 'video'} on YouTube`);
+    thumb.style.backgroundImage = `linear-gradient(180deg, rgba(7, 10, 18, 0.02), rgba(7, 10, 18, 0.48)), url('${imageUrl}')`;
+    thumb.classList.add('has-thumbnail');
+
+    if (fallback) {
+      fallback.textContent = 'Watch on YouTube';
+    }
+  });
+
+  const revealItems = document.querySelectorAll('.reveal');
+  if ('IntersectionObserver' in window) {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+          observer.unobserve(entry.target);
         }
-        else {
-          if (curLeftPos !== 0 && curCenterPos !== 0 && curRightPos !== 0) {
-            $left.removeClass('slider--item-left').prev().addClass('slider--item-left');
-            $center.removeClass('slider--item-center').prev().addClass('slider--item-center');
-            $right.removeClass('slider--item-right').prev().addClass('slider--item-right');
-          }
-          else {
-            if (curLeftPos === 0) {
-              $item.removeClass('slider--item-left').last().addClass('slider--item-left');
-              $center.removeClass('slider--item-center').prev().addClass('slider--item-center');
-              $right.removeClass('slider--item-right').prev().addClass('slider--item-right');
-            }
-            else if (curCenterPos === 0) {
-              $left.removeClass('slider--item-left').prev().addClass('slider--item-left');
-              $item.removeClass('slider--item-center').last().addClass('slider--item-center');
-              $right.removeClass('slider--item-right').prev().addClass('slider--item-right');
-            }
-            else {
-              $left.removeClass('slider--item-left').prev().addClass('slider--item-left');
-              $center.removeClass('slider--item-center').prev().addClass('slider--item-center');
-              $item.removeClass('slider--item-right').last().addClass('slider--item-right');
-            }
-          }
-        }
+      });
+    }, { threshold: 0.12 });
 
-      }, 400);
-
-      $('.slider').animate({ opacity: 1 }, 400);
-
-    });
-
+    revealItems.forEach((item) => observer.observe(item));
+  } else {
+    revealItems.forEach((item) => item.classList.add('is-visible'));
   }
-
-  function transitionLabels() {
-
-    $('.work-request--information input').focusout(function () {
-
-      var textVal = $(this).val();
-
-      if (textVal === "") {
-        $(this).removeClass('has-value');
-      }
-      else {
-        $(this).addClass('has-value');
-      }
-
-      // correct mobile device window position
-      window.scrollTo(0, 0);
-
-    });
-
-  }
-
-  outerNav();
-  workSlider();
-  transitionLabels();
-  $(window).on('load', function () {
-  setTimeout(() => {
-    $('.slider').addClass('loaded');
-  }, 100);
-});
-});
+})();
