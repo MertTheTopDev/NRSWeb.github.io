@@ -10,21 +10,39 @@
 
   if (year) year.textContent = new Date().getFullYear();
 
-  function closeNavigation() {
-    navToggle?.setAttribute('aria-expanded', 'false');
-    nav?.classList.remove('is-open');
-    document.body.classList.remove('nav-open');
+  function setNavigationState(isOpen) {
+    navToggle?.setAttribute('aria-expanded', String(isOpen));
+    navToggle?.classList.toggle('is-active', isOpen);
+    nav?.classList.toggle('is-open', isOpen);
+    document.body.classList.toggle('nav-open', isOpen);
   }
 
-  navToggle?.addEventListener('click', () => {
+  function closeNavigation() {
+    setNavigationState(false);
+  }
+
+  navToggle?.addEventListener('click', (event) => {
+    event.stopPropagation();
     const isExpanded = navToggle.getAttribute('aria-expanded') === 'true';
-    navToggle.setAttribute('aria-expanded', String(!isExpanded));
-    nav?.classList.toggle('is-open');
-    document.body.classList.toggle('nav-open');
+    setNavigationState(!isExpanded);
   });
 
   nav?.querySelectorAll('a').forEach((link) => {
     link.addEventListener('click', closeNavigation);
+  });
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') closeNavigation();
+  });
+
+  document.addEventListener('click', (event) => {
+    if (!document.body.classList.contains('nav-open')) return;
+    if (nav?.contains(event.target) || navToggle?.contains(event.target)) return;
+    closeNavigation();
+  });
+
+  window.addEventListener('resize', () => {
+    if (window.innerWidth > 980) closeNavigation();
   });
 
   const onScroll = () => {
@@ -43,7 +61,7 @@
 
       appCards.forEach((card) => {
         const categories = card.dataset.category || '';
-        const shouldShow = filter === 'all' || categories.includes(filter);
+        const shouldShow = filter === 'all' || categories.split(/\s+/).includes(filter);
         card.hidden = !shouldShow;
       });
     });
@@ -69,7 +87,11 @@
     const thumb = card.querySelector('.video-card__thumb');
     const fallback = card.querySelector('.video-card__fallback');
 
-    if (!videoId || !thumb) return;
+    if (!thumb) return;
+    if (!videoId) {
+      if (fallback) fallback.textContent = 'Add YouTube ID';
+      return;
+    }
 
     const youtubeUrl = `https://www.youtube.com/watch?v=${encodeURIComponent(videoId)}`;
     const imageUrl = `https://i.ytimg.com/vi/${encodeURIComponent(videoId)}/hqdefault.jpg`;
@@ -93,7 +115,7 @@
           observer.unobserve(entry.target);
         }
       });
-    }, { threshold: 0.12 });
+    }, { threshold: 0.12, rootMargin: '0px 0px -32px 0px' });
 
     revealItems.forEach((item) => observer.observe(item));
   } else {
